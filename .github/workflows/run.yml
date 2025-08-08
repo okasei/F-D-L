@@ -1,10 +1,6 @@
 name: FGO Login System
 
 on:
-  schedule:
-    - cron: "30 03 * * *"
-    - cron: "30 13 * * *"
-    - cron: "30 17 * * *"
   workflow_dispatch:
 
 jobs:
@@ -29,9 +25,9 @@ jobs:
           userIds: ${{ secrets.GAME_USERIDS }}
           authKeys: ${{ secrets.GAME_AUTHKEYS }}
           secretKeys: ${{ secrets.GAME_SECRETKEYS }}
-          webhookDiscord: ${{ secrets.DISCORD_WEBHOOK }}
+          tgBotToken: ${{ secrets.TGBOTTOKEN }}
+          tgChatID: ${{ secrets.TGCHATID }}
+          userFlags: ${{ secrets.USERFLAGS }}
           DEVICE_INFO_SECRET: ${{ secrets.DEVICE_INFO_SECRET }}
           APP_CHECK_SECRET: ${{ secrets.APP_CHECK_SECRET }}
           USER_AGENT_SECRET_2: ${{ secrets.USER_AGENT_SECRET_2 }}
-
-

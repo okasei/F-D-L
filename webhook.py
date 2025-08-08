@@ -4,8 +4,7 @@ import user
 import json
 
 
-def topLogin(data: list) -> None:
-    endpoint = main.webhook_discord_url
+def topLogin(data: list) -> str:
 
     rewards: user.Rewards = data[0]
     login: user.Login = data[1]
@@ -27,155 +26,17 @@ def topLogin(data: list) -> None:
 
         messageBonus += "\n"
 
-    jsonData = {
-        "content": None,
-        "embeds": [
-            {
-                "title": "FGO登录系统 - " + main.fate_region,
-                "description": f"登录成功。列出角色信息.\n\n{messageBonus}",
-                "color": 563455,
-                "fields": [
-                    {
-                        "name": "御主名",
-                        "value": f"{name1}",
-                        "inline": True
-                    },
-                    {
-                        "name": "朋友ID",
-                        "value": f"{fpids1}",
-                        "inline": True
-                    },
-                    {
-                        "name": "等级",
-                        "value": f"{rewards.level}",
-                        "inline": True
-                    },
-                    {
-                        "name": "呼符", 
-                        "value": f"{rewards.ticket}",
-                        "inline": True
-                    },                    
-                    {
-                        "name": "圣晶石",
-                        "value": f"{rewards.stone}",
-                        "inline": True
-                    },
-                    {
-                        "name": "圣晶片",
-                        "value": f"{rewards.sqf01}",
-                        "inline": True
-                    },
-                    {
-                        "name": "金苹果",
-                        "value": f"{rewards.goldenfruit}",
-                        "inline": True
-                    },
-                    {
-                        "name": "银苹果",
-                        "value": f"{rewards.silverfruit}",
-                        "inline": True
-                    },
-                    {
-                        "name": "铜苹果",
-                        "value": f"{rewards.bronzefruit}",
-                        "inline": True
-                    },
-                    {
-                        "name": "蓝苹果",
-                        "value": f"{rewards.bluebronzefruit}",
-                        "inline": True
-                    },
-                    {
-                        "name": "蓝苹果树苗",
-                        "value": f"{rewards.bluebronzesapling}",
-                        "inline": True
-                    },
-                    {
-                        "name": "连续登录天数",
-                        "value": f"{login.login_days}",
-                        "inline": True
-                    },
-                    {
-                        "name": "累计登录天数",
-                        "value": f"{login.total_days}",
-                        "inline": True
-                    },
-                    {
-                        "name": "白方块",
-                        "value": f"{rewards.pureprism}",
-                        "inline": True
-                    },
-                    {
-                        "name": "友情点",
-                        "value": f"{login.total_fp}",
-                        "inline": True
-                    },
-                    {
-                        "name": "今天 获得的友情点",
-                        "value": f"+{login.add_fp}",
-                        "inline": True
-                    },
-                    {
-                        "name": "当前AP",
-                        "value": f"{login.remaining_ap}",
-                        "inline": True
-                    },
-                    {
-                        "name": "圣杯",
-                        "value": f"{rewards.holygrail}",
-                        "inline": True
-                    },
-                    
-                ],
-                "thumbnail": {
-                    "url": "https://www.fate-go.jp/manga_fgo/images/commnet_chara01.png"
-                }
-            }
-        ],
-        "attachments": []
-    }
-
-    headers = {
-        "Content-Type": "application/json"
-    }
-
-    requests.post(endpoint, json=jsonData, headers=headers)
+    return f"{name1} \\[{main.fate_region}] Lv.{rewards.level}\n已登录 {login.login_days}/{login.total_days} 天\n护符: {rewards.ticket}\n圣晶石: {rewards.stone} 圣晶片:{rewards.sqf01}\n"
 
 
-def shop(item: str, quantity: str) -> None:
-    endpoint = main.webhook_discord_url
-    
-    jsonData = {
-        "content": None,
-        "embeds": [
-            {
-                "title": "FGO自动购物系统 - " + main.fate_region,
-                "description": f"购买成功.",
-                "color": 5814783,
-                "fields": [
-                    {
-                        "name": f"商店",
-                        "value": f"消费 {40 * quantity}Ap 购买 {quantity}x {item}",
-                        "inline": False
-                    }
-                ],
-                "thumbnail": {
-                    "url": "https://www.fate-go.jp/manga_fgo2/images/commnet_chara10.png"
-                }
-            }
-        ],
-        "attachments": []
-    }
 
-    headers = {
-        "Content-Type": "application/json"
-    }
+def shop(item: str, quantity: int) -> str:
 
-    requests.post(endpoint, json=jsonData, headers=headers)
+    return f"\\[兑换]{quantity} x {item}, AP -{40 * quantity}\n"
 
 
-def drawFP(servants, missions) -> None:
-    endpoint = main.webhook_discord_url
+
+def drawFP(servants, missions) -> str:
 
     message_mission = ""
     message_servant = ""
@@ -198,37 +59,11 @@ def drawFP(servants, missions) -> None:
         for mission in missions:
             message_mission += f"__{mission.message}__\n{mission.progressTo}/{mission.condition}\n"
 
-    jsonData = {
-        "content": None,
-        "embeds": [
-            {
-                "title": "FGO自动抽卡系统 - " + main.fate_region,
-                "description": f"完成当日免费友情抽卡。列出抽卡结果.\n\n{message_mission}",
-                "color": 5750876,
-                "fields": [
-                    {
-                        "name": "友情卡池",
-                        "value": f"{message_servant}",
-                        "inline": False
-                    }
-                ],
-                "thumbnail": {
-                    "url": "https://www.fate-go.jp/manga_fgo/images/commnet_chara02_rv.png"
-                }
-            }
-        ],
-        "attachments": []
-    }
-
-    headers = {
-        "Content-Type": "application/json"
-    }
-
-    requests.post(endpoint, json=jsonData, headers=headers)
+    return f"\\[友情池]\n{message_mission}\n{message_servant}"
 
 
-def LTO_Gacha(servants) -> None:
-    endpoint = main.webhook_discord_url
+
+def LTO_Gacha(servants) -> str:
 
     message_servant = ""
     
@@ -246,69 +81,12 @@ def LTO_Gacha(servants) -> None:
             else:
                 continue
 
-    jsonData = {
-        "content": None,
-        "embeds": [
-            {
-                "title": "FGO限定抽卡 - " + main.fate_region,
-                "description": f"完成限定友情抽卡。列出抽卡结果.",
-                "color": 16711680,
-                "fields": [
-                    {
-                        "name": "限定卡池",
-                        "value": f"{message_servant}",
-                        "inline": False
-                    }
-                ],
-                "thumbnail": {
-                    "url": "https://www.fate-go.jp/manga_fgo/images/commnet_chara02_rv.png"
-                }
-            }
-        ],
-        "attachments": []
-    }
-
-    headers = {
-        "Content-Type": "application/json"
-    }
-
-    requests.post(endpoint, json=jsonData, headers=headers)
-
-
-def Present(name, namegift, object_id_count) -> None:
-    endpoint = main.webhook_discord_url
     
-    jsonData = {
-        "content": None,
-        "embeds": [
-            {
-                "title": "FGO兑换系统 - JP",
-                "description": "兑换成功",
-                "color": 8388736,
-                "fields": [
-                    {
-                        "name": f"{name}",
-                        "value": f"{namegift} x{object_id_count}",
-                        "inline": False
-                    }
-                ],
-                "thumbnail": {
-                    "url": "https://www.fate-go.jp/manga_fgo2/images/commnet_chara06.png"
-                }
-            }
-        ],
-        "attachments": []
-    }
-
-    headers = {
-        "Content-Type": "application/json"
-    }
-
-    requests.post(endpoint, json=jsonData, headers=headers)
+    return f"\\[限定友情池].\n{message_servant}"
 
 
 
-
-
-
+def Present(name, namegift, object_id_count) -> str:
+    
+    return f"\\[兑换] \n{name}\n{namegift} x{object_id_count}\n"
 

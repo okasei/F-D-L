@@ -141,7 +141,7 @@ class user:
         self.builder_.Clean()
         return res
 
-    def topLogin(self):
+    def topLogin(self) -> str:
         DataWebhook = []  
         device_info = os.environ.get('DEVICE_INFO_SECRET')
         appCheck = os.environ.get('APP_CHECK_SECRET')
@@ -329,10 +329,10 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
         else:
             DataWebhook.append("No Bonus")
 
-        webhook.topLogin(DataWebhook)
+        return webhook.topLogin(DataWebhook)
         
 
-    def buyBlueApple(self):
+    def buyBlueApple(self) -> str:
         with open('login.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
 
@@ -363,7 +363,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                 quantity = remaining_ap_int // 40
                 if quantity == 0:
                     main.logger.info(f"\n {'=' * 40} \n [+] APが40未満の場合は購入できません (´･ω･`)? \n {'=' * 40} ")
-                    return
+                    return ''
                 
                 if bluebronzesapling < quantity:
                     num_to_purchase = bluebronzesapling
@@ -390,15 +390,16 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                             purchaseNum = resSuccess['purchaseNum']
 
                             main.logger.info(f"\n{'=' * 40}\n[+] {purchaseName} x{purchaseNum} 购买成功\n{'=' * 40}")
-                            webhook.shop(purchaseName, purchaseNum)
+                            return webhook.shop(purchaseName, purchaseNum)
             else:
                 main.logger.info(f"\n {'=' * 40} \n [+] ＞︿＜ 青銅の苗木が足りないヽ (*。>Д<)o゜ \n {'=' * 40} " )
+                return "\\[兑换] 青苹果树苗不足\n"
+        return '\n'
 
 
 
 
-
-    def LTO_Gacha(self):
+    def LTO_Gacha(self) -> str:
         # 5/15 【期間限定】「アルトリア･ペンドラゴン〔リリィ〕フレンドポイント召喚」！
 
         nowAt = mytime.GetTimeStamp()
@@ -406,7 +407,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
         
         if nowAt > closedAt:
             main.logger.info(f"\n {'=' * 40} \n [+] 期間限定召喚 已结束 \n {'=' * 40} ")
-            return
+            return ''
 
         gachaId = 6  
         gachaSubId = 4 
@@ -442,8 +443,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                         )
                     )
 
-        webhook.LTO_Gacha(servantArray)
-        return
+        return webhook.LTO_Gacha(servantArray)
         
         """
         if nowAt > closedAt:
@@ -504,7 +504,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
             return 
             """
 
-    def drawFP(self):
+    def drawFP(self) -> str:
         #SubID判定有点不准了.偶尔错误抽卡失败...等哪天闲暇再修
         gachaSubId = GetGachaSubIdFP()
 
@@ -550,7 +550,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                         )
                     )
 
-        webhook.drawFP(servantArray, missionArray)
+        return webhook.drawFP(servantArray, missionArray)
 
     
     def topHome(self):
@@ -609,7 +609,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
 
             main.logger.info(f"\n {'=' * 40} \n [+] 领取成功 \n {'=' * 40} " )
 
-    def lq003(self):
+    def lq003(self) -> str:
         # https://game.fate-go.jp/shop/purchase
         
         url = 'https://git.atlasacademy.io/atlasacademy/fgo-game-data/raw/branch/JP/master/mstShop.json'
@@ -622,6 +622,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
         max_base_prices = None
         max_base_prices_s = None
         max_base_name_s = '活动'
+        pStr = ''
         num = None
         for item in fdata:
             if 4001 in item.get('targetIds', []) and item.get('flag') == 4096:
@@ -669,7 +670,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                            namegift = "呼符（每月）"
                            name = "呼符"
                            object_id_count = num
-                           webhook.Present(name, namegift, object_id_count)
+                           pStr = pStr + webhook.Present(name, namegift, object_id_count)
             else:
                 num_ok = max_base_lim_it_Num
                 mana = gdata['cache']['replaced']['userGame'][0]['mana']
@@ -691,7 +692,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                         namegift = "呼符（每月）"
                         name = "呼符"
                         object_id_count = num
-                        webhook.Present(name, namegift, object_id_count)
+                        pStr = pStr + webhook.Present(name, namegift, object_id_count)
                     
         for item in fdata:
             if 4001 in item.get('targetIds', []) and item.get('flag') == 2048:
@@ -717,7 +718,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                         current_time = response_time
                         if current_time > closedAt:
                             main.logger.info(f"\n {'=' * 40} \n 目前没有 绿方块活动(´･ω･`) \n {'=' * 40} ")
-                            return
+                            return pStr
                         else:
                             with open('login.json', 'r', encoding='utf-8') as file:
                                  gdata = json.load(file)
@@ -732,7 +733,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                                num_ok = max_base_lim_it_s_Num - num_value
                                if num_ok == 0:
                                    main.logger.info(f"\n {'=' * 40} \n {max_base_name_s}呼符 你已经兑换过了(´･ω･`) \n {'=' * 40} ")
-                                   return
+                                   return pStr
                                else:
                                     if mana_s == 0:
                                        main.logger.info(f"\n {'=' * 40} \n 魔力棱镜不足(´･ω･`) \n {'=' * 40} ")
@@ -750,7 +751,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                                         name = "呼符"
                                         namegift = max_base_name_s
                                         object_id_count = num
-                                        webhook.Present(name, namegift, object_id_count)
+                                        pStr = pStr + webhook.Present(name, namegift, object_id_count)
                             else:
                                  num_ok = max_base_lim_it_s_Num
                                  mana = gdata['cache']['replaced']['userGame'][0]['mana']
@@ -758,7 +759,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                                 
                                  if mana_s == 0:
                                     main.logger.info(f"\n {'=' * 40} \n 魔力棱镜不足(´･ω･`) \n {'=' * 40} ")
-                                    return
+                                    return "\\[兑换] 魔力棱镜不足, 无法兑换\n"
                                  else:
                                      if num_ok > mana_s:
                                         num = mana_s
@@ -774,12 +775,13 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                                          name = "呼符"
                                          namegift = max_base_name_s
                                          object_id_count = num
-                                         webhook.Present(name, namegift, object_id_count)
+                                         pStr = pStr + webhook.Present(name, namegift, object_id_count)
                     else:
                         main.logger.info(f"\n {'=' * 40} \n [+] 和游戏服务器时间戳不一致 \n {'=' * 40}")
+        return pStr
 
     
-    def Present(self):
+    def Present(self) -> str:
         #素材交換券
         response = requests.get("https://api.atlasacademy.io/export/JP/nice_item.json")
         if response.status_code == 200:
@@ -857,22 +859,8 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
 
                    main.logger.info(f"\n {'=' * 40} \n [+] {name} 兑换成功 \n {'=' * 40} " )
         
-                   webhook.Present(name, namegift, object_id_count)
+                   return webhook.Present(name, namegift, object_id_count)
                    
         else:
             main.logger.info(f"\n {'=' * 40} \n [+] 礼物盒中交換券なし(´･ω･`) \n {'=' * 40} ")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return ''
